@@ -2,6 +2,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.Random;
 
 public class runAlg1 {
 
@@ -9,8 +10,14 @@ public class runAlg1 {
 
     /* define constants */
     static int numberOfTrials = 50;
-    static int MININPUTSIZE = 0;
-    static int MAXINPUTSIZE = 128;
+
+    static int numVerticies = 20;
+    static int maxX = 50;
+    static int maxY = 50;
+    static int maxEdgeCost = 60;
+    static int N = 20;
+    static int radius = 30;
+
     static String ResultsFolderPath = "/home/caitlin/Documents/Lab8/"; // pathname to results folder
     static FileWriter resultsFile;
     static PrintWriter resultsWriter;
@@ -18,9 +25,10 @@ public class runAlg1 {
     public static void main(String[] args) {
 
         //testing
-        GenerateRandomCostMatrix();
-        GenerateRandomEuclideanCostMatrix();
-        GenerateRandomCircularGraphCostMatrix();
+        GenerateRandomCostMatrix(numVerticies, maxEdgeCost);
+        GenerateRandomEuclideanCostMatrix(numVerticies, maxX, maxY);
+        GenerateRandomCircularGraphCostMatrix(numVerticies, N, radius);
+
         //direct the verification test results to file
         // run the whole experiment at least twice, and expect to throw away the data from the earlier runs, before java has fully optimized
         System.out.println("Running first full experiment...");
@@ -32,13 +40,31 @@ public class runAlg1 {
 
     }
 
-    static void GenerateRandomCostMatrix(int numVerticies, int maxEdgeCost)
+    static int[][] GenerateRandomCostMatrix(int namVertices, int maxEdgeCost)
     {
         //populates a 2D array with random edge costs from 0 to maxEdgeCost
-
         //must be symmetric - CostMatrix[i][j] must equal CostMatrix[j][i]
-
         //Also keep in mind the main diagonal would be self-edges and thus irrelevant/unused (just set them to zero).
+        int costMatrix[][] = new int[namVertices + 1][namVertices + 1];
+
+        for (int i = 1; i <= namVertices; i++)
+        {
+            for (int j = 1; j <= namVertices; j++)
+            {
+                costMatrix[i][j] = new Random().nextInt(maxEdgeCost + 1);
+            }
+        }
+        for (int i = 1; i <= namVertices; i++)
+        {
+            for (int j = 1; j <= namVertices; j++)
+            {
+                if (costMatrix[i][j] == 1 && costMatrix[j][i] == 0)
+                {
+                    costMatrix[j][i] = 1;
+                }
+            }
+        }
+        return costMatrix;
     }
 
     static void GenerateRandomEuclideanCostMatrix( int numVerticies, int maxX, int maxY){
